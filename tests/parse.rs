@@ -5,20 +5,28 @@ use decent_toml_parser as toml;
 fn parse_test() {
 
     let input = r#"
-    [[name]]
+    enjoy = [2, 3]
+
+    [name]
+    lol = 89
 
     [[name.b]]
+    hello.world = 8
+    [name.b.hello.bye.k]
+    l = 9
     [[name.b]]
+    "action!.89" = { mmy = 6 }
+    
+    [[hello]]
+    a = true
+    [[hello]]
+    b = false
+   "#;
 
-    [name.b.c]
-    hello = 1
+    let lines = toml::parse_toml_lines(input).unwrap();
+    let toml_value = toml::toml_value_from_lines(lines).unwrap();
 
-    [[name.b]]
-    c = 1
-    "#;
-
-    let d = toml::from_lines_to_value(input);
-    assert!(false, "{:?}", d);
+    assert!(false, "{}", toml::print(&toml_value));
 }
 
 

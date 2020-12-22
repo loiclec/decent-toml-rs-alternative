@@ -1,0 +1,50 @@
+[fruit]
+apple.color = "red"
+
+[fruit.apple] # not allowed
+
+[fruit.apple.texture]  # you can add sub-tables
+smooth = true
+
+# fruit defined and created
+# fruit.apple defined and created
+# fruit.apple.color defined and created
+
+# fruit.apple REDEFINES fruit.apple so it is not allowed
+
+[a.b.c]
+d.e = true
+
+[a.b]
+c.d.g = false
+c.d = false # not allowed
+
+# wtf
+
+# a.b.c is defined and created
+    # a.b is created
+    # a is created
+
+# a.b.c.d.e is defined and created
+    # a.b.c.d is created
+
+# a.b is defined but not created
+    # so it is allowed
+
+# a.b.c.d.g is defined and created
+
+
+# dotted keys define every subpart when the table block they are part of ends
+
+
+[a.b]
+c = true
+
+[a]
+f.h = true # valid
+f.g = true # valid because f.g was not defined
+f = false # invalid because f was created
+
+
+
+
