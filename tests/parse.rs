@@ -1,5 +1,5 @@
 
-use decent_toml_parser as toml;
+use decent_toml_rs_alternative as toml;
 
 #[test]
 fn parse_test() {

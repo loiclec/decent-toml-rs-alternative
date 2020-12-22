@@ -1,5 +1,5 @@
 [package]
-name = "decent-toml-parser"
+name = "decent-toml-rs-alternative"
 version = "0.1.0"
 authors = ["Loïc Lecrenier <loic.lecrenier@me.com>"]
 edition = "2018"
