@@ -3,12 +3,7 @@
 // https://github.com/alexcrichton/toml-rs/
 // Copyright (c) 2014 Alex Crichton
 
-//! Deserializing TOML into Rust structures.
-//!
-//! This module contains all the Serde support for deserializing TOML documents
-//! into Rust structures. Note that some top-level functions here are also
-//! provided at the top of the crate.
-
+//! Parsing TOML files line by line according to the TOML grammar, without validating the whole TOML file
 use std::borrow::Cow;
 use std::error;
 use std::f64;
@@ -17,10 +12,19 @@ use std::str;
 
 use crate::tokens::{Error as TokenError, Span, Token, Tokenizer};
 
+pub fn parse_toml_lines(input: &str) -> Result<Vec<Line<'_>>, Error> {
+    let mut parser = Parser::new(input);
+    let mut lines = vec![];
+    while let Some(line) = parser.line()? {
+        lines.push(line);
+    }
+    Ok(lines)
+}
+
 /// Type Alias for a TOML Table pair
 type TablePair<'a> = ((Span, Cow<'a, str>), Value<'a>);
 
-/// Errors that can occur when deserializing a type.
+/// Errors that can occur when parsing
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Error {
     inner: Box<ErrorInner>,
@@ -36,7 +40,7 @@ struct ErrorInner {
     key: Vec<String>,
 }
 
-/// Errors that can occur when deserializing a type.
+/// Errors that can occur when parsing
 #[derive(Debug, PartialEq, Eq, Clone)]
 enum ErrorKind {
     /// EOF was reached when looking for a value
@@ -97,8 +101,8 @@ enum ErrorKind {
     __Nonexhaustive,
 }
 
-/// Deserialization implementation for TOML.
-pub struct Deserializer<'a> {
+/// Parser implementation for TOML.
+pub struct Parser<'a> {
     input: &'a str,
     tokens: Tokenizer<'a>,
 }
@@ -111,25 +115,16 @@ struct Table<'a> {
     array: bool,
 }
 
-impl<'a> Deserializer<'a> {
-    /// Creates a new deserializer which will be deserializing the string
-    /// provided.
-    pub fn new(input: &'a str) -> Deserializer<'a> {
-        Deserializer {
+impl<'a> Parser<'a> {
+    /// Creates a new parser which will be parsing the string provided.
+    fn new(input: &'a str) -> Parser<'a> {
+        Parser {
             tokens: Tokenizer::new(input),
             input,
         }
     }
 
-    /// The `Deserializer::end` method should be called after a value has been
-    /// fully deserialized.  This allows the `Deserializer` to validate that the
-    /// input stream is at the end or that it only has trailing
-    /// whitespace/comments.
-    pub fn end(&mut self) -> Result<(), Error> {
-        Ok(())
-    }
-
-    pub fn line(&mut self) -> Result<Option<Line<'a>>, Error> {
+    fn line(&mut self) -> Result<Option<Line<'a>>, Error> {
         // TODO: parse comments
         loop {
             self.eat_whitespace()?;
@@ -522,7 +517,7 @@ impl<'a> Deserializer<'a> {
     pub fn array(&mut self) -> Result<(Span, Vec<Value<'a>>), Error> {
         let mut ret = Vec::new();
 
-        let intermediate = |me: &mut Deserializer<'_>| {
+        let intermediate = |me: &mut Parser<'_>| {
             loop {
                 me.eat_whitespace()?;
                 if !me.eat(Token::Newline)? && !me.eat_comment()? {
