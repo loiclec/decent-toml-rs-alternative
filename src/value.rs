@@ -333,7 +333,6 @@ pub fn toml_value_from_lines(lines: Vec<parser::Line<'_>>) -> Result<HashMap<Str
                 while let Some((_, part)) = header.next()? {
                     key_index.push(part.into_owned());
                 }
-                // TODO: maybe remove that method and use is_key_defined and put it in the loop above
                 if immutable_key_indexes.is_key_or_subkey_defined(&key_index) {
                     return Err(TomlError::ChangingInlineTable(key_index.clone()));
                 }
