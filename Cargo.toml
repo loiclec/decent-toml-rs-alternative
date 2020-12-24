@@ -3,7 +3,11 @@ name = "decent-toml-rs-alternative"
 version = "0.1.0"
 authors = ["Loïc Lecrenier <loic.lecrenier@me.com>"]
 edition = "2018"
+license = "MIT"
+keywords = ["toml", "parser"]
+repository = "https://git.sr.ht/~loic/decent-toml-rs-alternative"
+description = "A fork of the toml-rs crate (by Alex Crichton) that does not depend on serde. It is much less powerful, less documented, and not well-tested yet, but it is fast to compile and does what I want for my own use case. It might grow into a very capable crate at some point. Pair it with the decent-serde-toml-derive-alternative crate to derive the (de)serialization implementation for your own types, and thus avoid syn, quote, and serde entirely."
+categories = ["parser-implementations"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
