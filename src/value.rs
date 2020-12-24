@@ -41,6 +41,22 @@ pub enum TomlValue {
     /// Represents a TOML table
     Table(Table),
 }
+impl TomlValue {
+    pub fn get(&self, key: &str) -> Option<&TomlValue> {
+        if let TomlValue::Table(table) = self {
+            table.get(key)
+        } else {
+            None
+        }
+    }
+    pub fn as_string(&self) -> Option<String> {
+        if let TomlValue::String(s) = self {
+            Some(s.clone())
+        } else {
+            None
+        }
+    }
+}
 
 /// Type representing a TOML array, payload of the `Value::Array` variant
 pub type Array = Vec<TomlValue>;

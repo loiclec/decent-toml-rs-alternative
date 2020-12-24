@@ -1,7 +1,7 @@
 
 use crate::TomlValue;
 
-use std::collections::HashMap;
+use std::{collections::HashMap, path::PathBuf};
 
 pub trait ToToml {
     fn to_toml(&self) -> Option<TomlValue>;
@@ -80,5 +80,11 @@ impl<T> ToToml for Option<T> where T: ToToml {
 impl<T> ToToml for Box<T> where T: ToToml {
     fn to_toml(&self) -> Option<TomlValue> {
         self.as_ref().to_toml()
+    }
+}
+
+impl ToToml for PathBuf {
+    fn to_toml(&self) -> Option<TomlValue> {
+        self.to_str().map(|s| TomlValue::String( s.to_string() ))
     }
 }

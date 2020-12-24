@@ -1,7 +1,7 @@
 
 use crate::TomlValue;
 
-use std::{collections::HashMap, convert::TryFrom};
+use std::{collections::HashMap, convert::TryFrom, path::PathBuf};
 
 pub trait FromToml : Sized {
     fn from_toml(from: Option<&TomlValue>) -> Option<Self>;
@@ -136,5 +136,15 @@ impl<T> FromToml for Option<T> where T: FromToml {
 impl<T> FromToml for Box<T> where T: FromToml {
     fn from_toml(from: Option<&TomlValue>) -> Option<Self> {
         T::from_toml(from).map(Box::new)
+    }
+}
+
+impl FromToml for PathBuf {
+    fn from_toml(from: Option<&TomlValue>) -> Option<Self> {
+        if let Some(TomlValue::String(s)) = from {
+            Some(PathBuf::from(s))
+        } else {
+            None
+        }
     }
 }
