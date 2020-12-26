@@ -6,6 +6,9 @@ mod printer;
 mod from;
 mod to;
 
+#[cfg(feature="derive")]
+pub use decent_serde_toml_derive_alternative::{FromToml, ToToml};
+
 use std::collections::HashMap;
 
 pub use parser::parse_toml_lines;
