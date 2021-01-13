@@ -1,5 +1,6 @@
 
 use crate::TomlValue;
+use std::convert::TryFrom;
 
 use std::{collections::HashMap, path::PathBuf};
 
@@ -7,7 +8,7 @@ pub trait ToToml {
     fn to_toml(&self) -> Option<TomlValue>;
 }
 
-macro_rules! impl_from_toml_integer {
+macro_rules! impl_to_toml_integer {
     ($x:ty) => {
         impl ToToml for $x {
             fn to_toml(&self) -> Option<TomlValue> {
@@ -17,17 +18,38 @@ macro_rules! impl_from_toml_integer {
     }
 }
 
-impl_from_toml_integer!(u8);
-impl_from_toml_integer!(u16);
-impl_from_toml_integer!(u32);
-impl_from_toml_integer!(u64); // TODO: this is incorrect, should use string as fallback when the integer can't be converted to i64
-impl_from_toml_integer!(usize);
+impl_to_toml_integer!(u8);
+impl_to_toml_integer!(u16);
+impl_to_toml_integer!(u32);
 
-impl_from_toml_integer!(i8);
-impl_from_toml_integer!(i16);
-impl_from_toml_integer!(i32);
-impl_from_toml_integer!(i64);
-impl_from_toml_integer!(isize);
+impl ToToml for u64 {
+    fn to_toml(&self) -> Option<TomlValue> {
+        if let Some(y) = i64::try_from(*self).ok() {
+            Some(TomlValue::Integer(y))
+        } else {
+            Some(TomlValue::String(format!("{}", self)))
+        }
+    }
+}
+
+impl ToToml for usize {
+    fn to_toml(&self) -> Option<TomlValue> {
+        if let Some(y) = i64::try_from(*self).ok() {
+            Some(TomlValue::Integer(y))
+        } else {
+            Some(TomlValue::String(format!("{}", self)))
+        }
+    }
+}
+
+// impl_to_toml_integer!(u64); // TODO: this is incorrect, should use string as fallback when the integer can't be converted to i64
+// impl_to_toml_integer!(usize);
+
+impl_to_toml_integer!(i8);
+impl_to_toml_integer!(i16);
+impl_to_toml_integer!(i32);
+impl_to_toml_integer!(i64);
+impl_to_toml_integer!(isize);
 
 impl ToToml for f32 {
     fn to_toml(&self) -> Option<TomlValue> {

@@ -16,7 +16,14 @@ macro_rules! impl_from_toml_integer {
                         <$x>::try_from(*x).ok()
                     }
                     _ => { None }
-                }
+                }.or_else(|| {
+                    match from {
+                        Some(TomlValue::String(x)) => {
+                            str::parse::<$x>(&x).ok()
+                        }
+                        _ => { None }
+                    }
+                })
             }
         }
     };
@@ -25,7 +32,7 @@ macro_rules! impl_from_toml_integer {
 impl_from_toml_integer!(u8);
 impl_from_toml_integer!(u16);
 impl_from_toml_integer!(u32);
-impl_from_toml_integer!(u64); // TODO: this is incorrect, should use string as fallback when the integer can't be converted to i64
+impl_from_toml_integer!(u64);
 impl_from_toml_integer!(usize);
 
 impl_from_toml_integer!(i8);
@@ -40,6 +47,9 @@ impl FromToml for f32 {
             Some(TomlValue::Float(x)) => {
                 Some(*x as f32)
             }
+            Some(TomlValue::Integer(x)) => {
+                Some(*x as f32)
+            }
             _ => { None }
         }
     }
@@ -50,6 +60,9 @@ impl FromToml for f64 {
         match from {
             Some(TomlValue::Float(x)) => {
                 Some(*x)
+            }
+            Some(TomlValue::Integer(x)) => {
+                Some(*x as f64)
             }
             _ => { None }
         }
