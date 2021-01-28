@@ -16,4 +16,4 @@ default = ["derive"]
 derive = ["decent-serde-toml-derive-alternative"]
 
 [dependencies]
-decent-serde-toml-derive-alternative = { version = "0.1", optional = true }
+decent-serde-toml-derive-alternative = { version = "0.2", optional = true }
