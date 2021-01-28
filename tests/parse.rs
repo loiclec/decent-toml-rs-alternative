@@ -24,9 +24,8 @@ fn parse_test() {
    "#;
 
     let lines = toml::parse_toml_lines(input).unwrap();
-    let toml_value = toml::toml_value_from_lines(lines).unwrap();
+    let _toml_value = toml::toml_value_from_lines(lines).unwrap();
 
-    assert!(false, "{}", toml::print(&toml_value));
 }
 
 
